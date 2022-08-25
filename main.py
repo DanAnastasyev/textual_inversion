@@ -139,11 +139,11 @@ def get_parser(**parser_kwargs):
     )
 
     parser.add_argument(
-        "--datadir_in_name", 
-        type=str2bool, 
-        nargs="?", 
-        const=True, 
-        default=True, 
+        "--datadir_in_name",
+        type=str2bool,
+        nargs="?",
+        const=True,
+        default=True,
         help="Prepend the final directory in the data_root to the output directory name")
 
     parser.add_argument("--actual_resume", type=str, default="", help="Path to model to actually resume from")
@@ -539,7 +539,7 @@ if __name__ == "__main__":
 
         if opt.datadir_in_name:
             now = os.path.basename(os.path.normpath(opt.data_root)) + now
-            
+
         nowname = now + name + opt.postfix
         logdir = os.path.join(opt.logdir, nowname)
 
@@ -727,7 +727,10 @@ if __name__ == "__main__":
         # configure learning rate
         bs, base_lr = config.data.params.batch_size, config.model.base_learning_rate
         if not cpu:
-            ngpu = len(lightning_config.trainer.gpus.strip(",").split(','))
+            if isinstance(lightning_config.trainer.gpus, int):
+                ngpu = lightning_config.trainer.gpus
+            else:
+                ngpu = len(lightning_config.trainer.gpus.strip(",").split(','))
         else:
             ngpu = 1
         if 'accumulate_grad_batches' in lightning_config.trainer:
